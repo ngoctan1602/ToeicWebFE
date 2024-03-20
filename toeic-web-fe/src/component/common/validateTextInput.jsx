@@ -1,6 +1,6 @@
 import { Form, Input } from "antd";
 import React from 'react';
-const TextValidate = ({ prop, onChange }) => {
+const TextValidate = ({ prop, hasDefault }) => {
     return (
         <Form.Item
             hasFeedback
@@ -18,7 +18,7 @@ const TextValidate = ({ prop, onChange }) => {
                 },
             ]}
         >
-            <Input allowClear type='text' defaultValue={prop.defaultValue}
+            <Input allowClear type='text' defaultValue={hasDefault !== null ? hasDefault : ''}
             // onChange={(e) => onChange(prop.name, e.target.value)}
             />
         </Form.Item>

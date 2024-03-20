@@ -15,36 +15,19 @@ const ModalAddYear = ({ message, onClose, open, isUpdate, dataCurrent }) => {
         year: '',
         description: ''
     })
-    if (isUpdate) {
-        console.log(Number(dataCurrent.id))
-    }
     const Submit = (values) => {
         for (const key in values) {
             if (Object.hasOwnProperty.call(values, key)) {
                 year[key] = values[key]
             }
         }
-
         addYearMutation.mutate(year)
-        // console.log(addSuccess)
-
     }
-    const description = null
-    useEffect(
-        () => {
-            if (isUpdate) {
-                description = dataCurrent.description || null
-            }
-        }
-    )
 
     const propName = {
         name: 'description',
         label: "Mô tả",
         required: false,
-        defaultValue: description
-        // min: 0,
-        // max: 0
     }
     const propNumber = {
         name: 'year',
@@ -53,7 +36,6 @@ const ModalAddYear = ({ message, onClose, open, isUpdate, dataCurrent }) => {
         min: 2020,
         max: 2024
     }
-    // const form = useForm(null);
 
     const handleReset = () => {
         setYear({ year: '', description: '' })
@@ -130,30 +112,34 @@ const ModalAddYear = ({ message, onClose, open, isUpdate, dataCurrent }) => {
                     onFinish={Submit}
                 >
                     {
-                        isUpdate &&
-                        <>
-                            <Form.Item
-                                label='Id'
-                                name='id'
+                        isUpdate ?
+                            <>
+                                <Form.Item
+                                    label='Id'
+                                    name='id'
 
-                            >
-                                <Input style={{ color: 'black' }} disabled defaultValue={Number(dataCurrent.id)} >
-                                </Input>
-                            </Form.Item>
-                            <Form.Item
-                                label='Năm'
-                                name='year'
-                            >
-                                <Input disabled style={{ color: 'black' }} defaultValue={Number(dataCurrent.year)} >
-                                </Input>
-                            </Form.Item>
-                        </>
+                                >
+                                    <Input style={{ color: 'black' }} disabled defaultValue={Number(dataCurrent.id)} >
+                                    </Input>
+                                </Form.Item>
+                                <Form.Item
+                                    label='Năm'
+                                    name='year'
+                                >
+                                    <Input disabled style={{ color: 'black' }} defaultValue={Number(dataCurrent.year)} >
+                                    </Input>
+                                </Form.Item>
+
+                                <TextValidate prop={propName} hasDefault={dataCurrent.description} />
+                            </>
+                            :
+                            <>
+                                <NumberValidate prop={propNumber} />
+
+                                <TextValidate prop={propName} />
+                            </>
                     }
-                    {
-                        !isUpdate &&
-                        <NumberValidate prop={propNumber} />
-                    }
-                    <TextValidate prop={propName} />
+
 
                 </Form>
             </Modal >
