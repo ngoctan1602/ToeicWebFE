@@ -1,16 +1,16 @@
-import axios from 'axios'
-const yearApi = axios.create(
-    {
-        baseURL: import.meta.env.VITE_BASE_API + 'year'
-    }
-)
+
+import * as BaseApi from '../api/BaseAPI'
 
 export const getYear = async () => {
-    return (await yearApi.get('/getAll')).data
+    return await BaseApi.getItems("year/getAll")
 }
 export const addYear = async (year) => {
-    return (await yearApi.post('/add', year)).data
+    return (await BaseApi.postItem('year/add', year))
 }
 export const update = async (year) => {
-    return (await yearApi.put('/update', year)).data
+    return (await BaseApi.putItem('year/update', year))
+}
+
+export const addImage = async (image) => {
+    return (await BaseApi.createFormData('image/upload', image))
 }

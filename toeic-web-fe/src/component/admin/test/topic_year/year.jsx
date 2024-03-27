@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Button, ConfigProvider, Space, Table, Tag } from 'antd';
 import { DeleteOutlined, EditFilled, InfoCircleOutlined } from '@ant-design/icons';
-import ModalConfirm from '../../common/modalConfirm';
-
-import * as yearSV from '../../../services/yearService'
+import ModalConfirm from '../../../common/modalConfirm';
+import * as yearSV from '../../../../services/yearService'
 import { useQuery, useQueryClient } from "react-query";
 import ModalAddYear from './modalAddYear';
-
+import UseMutationCustom from '../../../common/useMutationCustom';
 const YearRow = () => {
     const queryClient = useQueryClient()
     const {
@@ -16,7 +15,6 @@ const YearRow = () => {
         data: getYear
     } = useQuery("getYear", yearSV.getYear)
     const [openModal, setOpenModal] = useState(false)
-
     const columns = [
         {
             title: 'Năm',
@@ -108,8 +106,10 @@ const YearRow = () => {
                 <ModalAddYear message="Thêm mới năm phát hành" open={true} onClose={cancelUpdate} isUpdate={true} dataCurrent={dataCurrent}></ModalAddYear>
             }
             {
-                isLoading ? <p>Loading</p> :
+                isLoading ?
+                    <p>Loading</p> :
                     <Table
+                        tableLayout='fixed'
                         className='box-shadow'
                         columns={columns}
                         dataSource={getYear.data}

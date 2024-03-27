@@ -26,8 +26,10 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import { Route, useNavigate, Routes } from 'react-router';
 import AdminRouter from './router';
-import ManageYearTopicOfTest from './component/admin/test/manageTest';
+import ManageYearTopicOfTest from './component/admin/test/topic_year/manageTest';
 import { GlobalStateProvider, useGlobalState } from './component/common/globaleState';
+import AddQuetion from './component/admin/test/question/addQuestion';
+import { checkUrlOnline } from './api/BaseAPI';
 const items = [
   getItem('Thông tin người dùng', AdminRouter.account, <UserOutlined />),
   getItem('Thông kê điểm thi', '2', <LineChartOutlined />),
@@ -37,7 +39,7 @@ const items = [
     getItem('Chủ đề / Năm', AdminRouter.testYear, <CalendarOutlined />)
   ]),
   getItem('Câu hỏi', 'sub2', <QuestionCircleOutlined />, [
-    getItem('Tạo mới', '6'),
+    getItem('Tạo mới', AdminRouter.question),
     getItem('Quản lý', '8')
   ]),
   getItem('Đăng xuất', '9', <PoweroffOutlined />, null, true),
@@ -59,6 +61,12 @@ const App = () => {
     transition: Flip,
   });
 
+  const notifyWarning = (message) => toast.warning(message, {
+    position: "bottom-right",
+    autoClose: 2000,
+    transition: Flip,
+  });
+
 
   const { globalState, setGlobalState } = useGlobalState();
   useEffect(
@@ -66,8 +74,19 @@ const App = () => {
       if (globalState.handle) {
         globalState.success ? notifySuccess(globalState.message) : notifyFailed(globalState.message)
       }
+
+    }, []
+  )
+  useEffect(
+    () => {
+      checkUrlOnline(import.meta.env.VITE_BASE_API + "part/getAll")
+        .then(result => {
+          if (!result)
+            notifyWarning("Kiểm tra kết nối với server")
+        });
     }
   )
+
 
   return (
     <Layout
@@ -133,6 +152,11 @@ const GetContent = () => {
       <Routes>
         <Route
           path={AdminRouter.account} element={<ManageYearTopicOfTest />}
+
+        >
+        </Route>
+        <Route
+          path={AdminRouter.question} element={<AddQuetion />}
         >
         </Route>
       </Routes>
