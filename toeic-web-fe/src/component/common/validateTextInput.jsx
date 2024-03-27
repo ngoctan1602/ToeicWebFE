@@ -3,9 +3,11 @@ import React from 'react';
 const TextValidate = ({ prop, hasDefault }) => {
     return (
         <Form.Item
+            style={{ width: '100%' }}
             hasFeedback
             label={prop.label}
             name={prop.name}
+            initialValue={hasDefault !== null ? hasDefault : ''}
             rules={[
                 {
                     required: prop.required, message: `Không được bỏ trống ${(prop.label).toLowerCase()}`
@@ -18,8 +20,7 @@ const TextValidate = ({ prop, hasDefault }) => {
                 },
             ]}
         >
-            <Input allowClear type='text' defaultValue={hasDefault !== null ? hasDefault : ''}
-            // onChange={(e) => onChange(prop.name, e.target.value)}
+            <Input allowClear type='text'
             />
         </Form.Item>
     );

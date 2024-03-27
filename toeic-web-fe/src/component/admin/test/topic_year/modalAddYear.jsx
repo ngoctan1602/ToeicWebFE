@@ -1,12 +1,12 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Button, Modal, Form, Alert, Input } from 'antd';
-import TextValidate from '../../common/validateTextInput'
-import NumberValidate from '../../common/validateNumber';
-import { GlobalStateProvider, useGlobalState } from '../../common/globaleState';
+import TextValidate from '../../../common/validateTextInput'
+import NumberValidate from '../../../common/validateNumber';
+import { GlobalStateProvider, useGlobalState } from '../../../common/globaleState';
 import { useMutation, useQueryClient } from 'react-query';
-import * as yearSV from '../../../services/yearService'
+import * as yearSV from '../../../../services/yearService'
 import FormItem from 'antd/es/form/FormItem';
-import UseMutationCustom from '../../common/useMutationCustom';
+import UseMutationCustom from '../../../common/useMutationCustom';
 import { useForm } from 'antd/es/form/Form';
 const ModalAddYear = ({ message, onClose, open, isUpdate, dataCurrent }) => {
     const { globalState, setGlobalState } = useGlobalState()
@@ -16,12 +16,18 @@ const ModalAddYear = ({ message, onClose, open, isUpdate, dataCurrent }) => {
         description: ''
     })
     const Submit = (values) => {
-        for (const key in values) {
-            if (Object.hasOwnProperty.call(values, key)) {
-                year[key] = values[key]
+        if (!isUpdate) {
+
+            for (const key in values) {
+                if (Object.hasOwnProperty.call(values, key)) {
+                    year[key] = values[key]
+                }
             }
+            addYearMutation.mutate(year)
         }
-        addYearMutation.mutate(year)
+        else {
+            updateYearMutation.mutate(values)
+        }
     }
 
     const propName = {
@@ -42,54 +48,7 @@ const ModalAddYear = ({ message, onClose, open, isUpdate, dataCurrent }) => {
         form.resetFields();
     };
 
-    // const addYearMutation = useMutation(yearSV.addYear,
-    //     {
-    //         onSuccess: (data) => {
-    //             queryClient.invalidateQueries("getYear")
-    //             setYear({ year: '', description: '' })
-    //             handleReset()
-    //             setGlobalState({ message: 'Thêm mới thành công', success: true, handle: true })
-    //             setTimeout(
-    //                 () => {
-    //                     setGlobalState({ message: '', success: false, handle: false })
-    //                 }
-    //             )
-    //         },
-    //         onError: (data) => {
-    //             setGlobalState({ message: 'Thêm mới thật bại ', success: false, handle: true })
-    //             setTimeout(
-    //                 () => {
-    //                     setGlobalState({ message: '', success: false, handle: false })
-    //                 }
-    //             )
-    //         }
-    //     }
-    // )
-
-    // const updateYear = useMutation(yearSV.update,
-    //     {
-    //         onSuccess: (data) => {
-    //             queryClient.invalidateQueries("getYear")
-    //             // setYear({ year: '', description: '' })
-    //             // handleReset()
-    //             setGlobalState({ message: 'Cập nhật thành công', success: true, handle: true })
-    //             setTimeout(
-    //                 () => {
-    //                     setGlobalState({ message: '', success: false, handle: false })
-    //                 }
-    //             )
-    //         },
-    //         onError: (data) => {
-    //             setGlobalState({ message: 'Cập nhật thật bại ', success: false, handle: true })
-    //             setTimeout(
-    //                 () => {
-    //                     setGlobalState({ message: '', success: false, handle: false })
-    //                 }
-    //             )
-    //         }
-    //     }
-    // )
-
+    const updateYearMutation = UseMutationCustom(yearSV.update, "Cập nhật thành công", "Cập nhật thất bại", "getYear")
     const addYearMutation = UseMutationCustom(yearSV.addYear, "Thêm mới thành công", "Thêm mới thất bại", "getYear", handleReset)
     const [form] = Form.useForm();
     return (
@@ -117,16 +76,19 @@ const ModalAddYear = ({ message, onClose, open, isUpdate, dataCurrent }) => {
                                 <Form.Item
                                     label='Id'
                                     name='id'
-
+                                    initialValue={Number(dataCurrent.id)}
                                 >
-                                    <Input style={{ color: 'black' }} disabled defaultValue={Number(dataCurrent.id)} >
+                                    <Input style={{ color: 'black' }} disabled
+
+                                    >
                                     </Input>
                                 </Form.Item>
                                 <Form.Item
                                     label='Năm'
                                     name='year'
+                                    initialValue={Number(dataCurrent.year)}
                                 >
-                                    <Input disabled style={{ color: 'black' }} defaultValue={Number(dataCurrent.year)} >
+                                    <Input disabled style={{ color: 'black' }}>
                                     </Input>
                                 </Form.Item>
 

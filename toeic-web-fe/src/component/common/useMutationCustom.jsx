@@ -7,7 +7,7 @@ const UseMutationCustom = (fc, success, error, refetch, someTodo) => {
     return useMutation(fc, {
         onSuccess: (data) => {
             queryClient.invalidateQueries(refetch)
-            someTodo()
+            // someTodo()
             setGlobalState({ message: success, success: true, handle: true });
             setTimeout(() => {
                 setGlobalState({ message: '', success: false, handle: false });
