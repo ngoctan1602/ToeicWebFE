@@ -6,7 +6,8 @@ export const useGlobalState = () => useContext(GlobalStateContext);
 
 export const GlobalStateProvider = ({ children }) => {
     const [globalState, setGlobalState] = useState({
-        // Khởi tạo trạng thái toàn cục ở đây\
+        // Khởi tạo trạng thái toàn cục ở đây
+        connect: false,
         handle: false,
         message: '',
         success: false,

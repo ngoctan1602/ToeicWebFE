@@ -75,16 +75,22 @@ const App = () => {
         globalState.success ? notifySuccess(globalState.message) : notifyFailed(globalState.message)
       }
 
-    }, []
+    }, [globalState]
   )
   useEffect(
     () => {
       checkUrlOnline(import.meta.env.VITE_BASE_API + "part/getAll")
         .then(result => {
-          if (!result)
+          if (!result) {
+
             notifyWarning("Kiểm tra kết nối với server")
-        });
-    }
+          }
+          else {
+            setGlobalState({ ...globalState, connect: true })
+          }
+        }
+        );
+    }, []
   )
 
 
