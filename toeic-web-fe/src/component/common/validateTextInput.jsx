@@ -1,9 +1,13 @@
 import { Form, Input } from "antd";
 import React from 'react';
-const TextValidate = ({ prop, hasDefault }) => {
+const TextValidate = ({ prop, hasDefault, style }) => {
     return (
         <Form.Item
-            style={{ width: '100%' }}
+            style={
+                {
+                    ...style,
+                    width: '100%'
+                }}
             hasFeedback
             label={prop.label}
             name={prop.name}
