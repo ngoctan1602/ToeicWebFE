@@ -40,16 +40,26 @@ const AddNewTest = () => {
     const [current, setCurrent] = useState(0);
     const [yearSelected, setYearSelected] = useState();
     const [topicSelected, setTopicSelected] = useState();
-    const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+    const [selectedRowKeysPart1, setSelectedRowKeysPart1] = useState([]);
+    const [selectedRowKeysPart2, setSelectedRowKeysPart2] = useState([]);
+
 
     const nextStep = () => {
         if (current === 0) {
             if (CheckValue(yearSelected) && CheckValue(topicSelected)
-                && selectedRowKeys.length > 0 && selectedRowKeys.length <= 6) {
+                && selectedRowKeysPart1.length > 0 && selectedRowKeysPart1.length === 6) {
                 setCurrent(current + 1)
             }
             else {
                 setGlobalState({ ...globalState, handle: true, message: "Vui lòng chọn đầy đủ năm ra đề, đề thi và số lượng câu hỏi part 1 là 6" })
+            }
+        }
+        if (current === 1) {
+            if (selectedRowKeysPart2.length > 0 && selectedRowKeysPart2.length === 25) {
+                setCurrent(current + 1)
+            }
+            else {
+                setGlobalState({ ...globalState, handle: true, message: "Vui lòng chọn số câu trong part 2 là 25" })
             }
         }
     }
@@ -64,14 +74,15 @@ const AddNewTest = () => {
                     <Col span={24}>
                         <Part1 year={{ yearSelected: yearSelected, setYearSelected: setYearSelected }}
                             topic={{ topicSelected: topicSelected, setTopicSelected: setTopicSelected }}
-                            row={{ selectedRowKeys: selectedRowKeys, setSelectedRowKeys: setSelectedRowKeys }}
+                            row={{ selectedRowKeys: selectedRowKeysPart1, setSelectedRowKeys: setSelectedRowKeysPart1 }}
                         ></Part1>
                     </Col>
                 }
                 {
                     (current === 1) &&
                     <Col span={24}>
-                        <Part2></Part2>
+                        <Part2 row={{ selectedRowKeys: selectedRowKeysPart2, setSelectedRowKeys: setSelectedRowKeysPart2 }}
+                        ></Part2>
                     </Col>
                 }
             </Row>

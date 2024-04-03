@@ -46,6 +46,12 @@ const Part1 = ({ year, topic, row }) => {
     };
     const [years, setYears] = useState([])
     const {
+        isLoadingQues,
+        isErrorQues,
+        errorQues,
+        data: getQuestion
+    } = useQuery("getQuestion", () => QuestionSV.getQuestionByPartId(1))
+    const {
         isLoading,
         isError,
         error,
@@ -60,49 +66,35 @@ const Part1 = ({ year, topic, row }) => {
         data: getTopic
     } = useQuery("getTopic", TopicSV.getTopic)
 
-    const {
-        isLoadingQues,
-        isErrorQues,
-        errorQues,
-        data: getQuestion
-    } = useQuery("getQuestion", () => QuestionSV.getQuestionByPartId(1))
-
     const [questionPart1, setQuestionPart1] = useState([])
 
     useEffect(() => {
         if (globalState.connect) {
-            if (!isLoading && !isError) {
+            // Fetch data for year
+            if (!isLoading && !isError && getYear !== null && getYear !== undefined) {
                 const updateYear = getYear.data.map(element => ({
                     value: element.id,
                     label: element.year
                 }));
                 setYears(updateYear);
             }
-        }
 
-    }, [isLoading, globalState.connect, isErrorQues]);
-
-    useEffect(() => {
-        if (globalState.connect) {
-            if (!isLoadingQues && !isErrorQues) {
-                setQuestionPart1(getQuestion.data)
-
-            }
-        }
-    }, [isLoadingQues, globalState.connect, isErrorQues]);
-    useEffect(() => {
-        if (globalState.connect) {
-
-            if (!isLoadingTopic && !isErrorTopic) {
-                const updateYear = getTopic.data.map(element => ({
+            // Fetch data for topic
+            if (!isLoadingTopic && !isErrorTopic && getTopic !== null && getTopic !== undefined) {
+                const updateTopic = getTopic.data.map(element => ({
                     value: element.id,
                     label: element.name
                 }));
-                setTopics(updateYear);
+                setTopics(updateTopic);
+            }
+
+            // Fetch data for questions
+            if (!isLoadingQues && !isErrorQues && getQuestion !== null && getQuestion !== undefined) {
+                setQuestionPart1(getQuestion.data);
             }
         }
+    }, [globalState.connect, isLoading, isError, getYear, isLoadingTopic, isErrorTopic, getTopic, isLoadingQues, isErrorQues, getQuestion]);
 
-    }, [globalState.connect, isLoadingTopic, isErrorTopic]);
 
     // const [selectedRowKeys, setSelectedRowKeys] = useState([]);
 
