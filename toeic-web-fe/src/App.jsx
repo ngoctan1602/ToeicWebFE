@@ -30,6 +30,7 @@ import ManageYearTopicOfTest from './component/admin/test/topic_year/manageTest'
 import { GlobalStateProvider, useGlobalState } from './component/common/globaleState';
 import AddQuetion from './component/admin/test/question/addQuestion';
 import { checkUrlOnline } from './api/BaseAPI';
+import AddNewTest from './component/admin/test/test/addTest';
 const items = [
   getItem('Thông tin người dùng', AdminRouter.account, <UserOutlined />),
   getItem('Thông kê điểm thi', '2', <LineChartOutlined />),
@@ -163,6 +164,10 @@ const GetContent = () => {
         </Route>
         <Route
           path={AdminRouter.question} element={<AddQuetion />}
+        >
+        </Route>
+        <Route
+          path={AdminRouter.testNew} element={<AddNewTest />}
         >
         </Route>
       </Routes>

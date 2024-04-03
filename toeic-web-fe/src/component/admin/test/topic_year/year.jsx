@@ -45,7 +45,6 @@ const YearRow = () => {
                             },
                         }}
                     >
-
                         <Button onClick={() => setOpenModal(true)} style={{ boxShadow: 'none', color: 'red' }} icon={<DeleteOutlined></DeleteOutlined>}></Button>
                     </ConfigProvider>
                     <ConfigProvider
