@@ -1,4 +1,4 @@
-import { Col, Form, Row, Select, Table, Tooltip } from "antd";
+import { Col, Form, Row, Select, Table, Tooltip, Input } from "antd";
 import { useGlobalState } from "../../../common/globaleState";
 import * as YearSV from "../../../../services/yearService";
 import * as TopicSV from "../../../../services/topicService";
@@ -34,7 +34,7 @@ const columns = [
     },
 ];
 
-const Part1 = ({ year, topic, row }) => {
+const Part1 = ({ name, year, topic, row }) => {
     const { globalState, setGlobalState } = useGlobalState();
     const handleChange = (value, isYear) => {
         if (isYear) {
@@ -107,7 +107,17 @@ const Part1 = ({ year, topic, row }) => {
         onChange: onSelectChange,
     };
     return (
-        <Row align={"middle"} gutter={[16, 16]}>
+        <Row align={"middle"} gutter={[16, 16]} style={{ width: "100%" }}>
+            <Row style={{ width: "100%" }} align={"middle"} gutter={[16, 16]}>
+                <Col span={2} offset={0}>
+                    Tên đề thi
+                </Col>
+                <Col span={20}>
+
+                    <Input value={name.nameTest} onChange={(e) => name.setNameTest(e.target.value)}>
+                    </Input>
+                </Col>
+            </Row>
             <Col span={2}>
                 Chọn năm
             </Col>

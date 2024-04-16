@@ -1,13 +1,12 @@
 import { Col, Form, Row, Select, Table, Tooltip } from "antd";
 import { useGlobalState } from "../../../common/globaleState";
-import * as YearSV from "../../../../services/yearService";
-import * as TopicSV from "../../../../services/topicService";
-import * as QuestionSV from "../../../../services/questionService";
+import * as PartSV from "../../../../services/paragraphServices";
 import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import updateValue from "../../../common/changeValueUsestate";
 import Icon from "@ant-design/icons/lib/components/Icon";
 import { QuestionCircleOutlined } from "@ant-design/icons";
+import Item from "antd/es/list/Item";
 const columns = [
     {
         title: 'ID',
@@ -20,34 +19,43 @@ const columns = [
         key: 'content',
     },
     {
-        title: 'Âm thanh',
-        dataIndex: 'audio',
-        key: 'audio',
-        render: (text) => <audio controls> <source src={text}></source></audio>
+        title: 'Hình ảnh',
+        dataIndex: 'img',
+        key: 'img',
+        render: (text) => <img style={{ width: 50, height: 50 }} src={text}></img>
     },
+
 ];
 
-const Part2 = ({ row }) => {
+const Part6 = ({ row }) => {
     const { globalState, setGlobalState } = useGlobalState();
 
     const {
-        isLoadingQues,
-        isErrorQues,
+        isLoadingPara,
+        isErrorPara,
         errorQues,
-        data: getQuestionPart2
-    } = useQuery("getQuestionPart2", () => QuestionSV.getQuestionByPartId(2))
+        data: getParaPart6
+    } = useQuery("getParaPart6", () => PartSV.getParagraphWitPart({ idPart: 6 }))
 
-    const [questionPart2, setQuestionPart2] = useState([])
+    const [paragraphs, setParagraphs] = useState([])
 
     useEffect(() => {
         if (globalState.connect) {
-            if (!isLoadingQues && !isErrorQues && getQuestionPart2 !== undefined) {
-                setQuestionPart2(getQuestionPart2.data)
+            if (!isLoadingPara && !isErrorPara && getParaPart6 !== undefined) {
+                if (getParaPart6.data !== null)
+                    setParagraphs(getParaPart6.data.listPara)
             }
         }
-    }, [isLoadingQues, globalState.connect, isErrorQues, getQuestionPart2]);
+    }, [isLoadingPara, globalState.connect, isErrorPara, getParaPart6]);
 
-    const onSelectChange = (selectedRowKeys) => {
+    const onSelectChange = (selectedRowKeys, selectedRows) => {
+        let listQuestion = [];
+        for (let i = 0; i < selectedRows.length; i++) {
+            for (let j = 0; j < selectedRows[i].listQues.length; j++) {
+                listQuestion.push(selectedRows[i].listQues[j].id)
+            }
+        }
+        updateValue(row.setListQuestion, listQuestion)
         updateValue(row.setSelectedRowKeys, selectedRowKeys);
     };
     const rowSelection = {
@@ -55,14 +63,15 @@ const Part2 = ({ row }) => {
         onChange: onSelectChange,
     };
     return (
-        <Row align={"middle"} gutter={[16, 16]}>
+
+        <Row align={"middle"} gutter={[16, 16]} style={{ width: "100%" }}>
             <Col offset={19} span={3}>
                 Số câu đã chọn
             </Col>
             <Col span={2}
             >
-                <Tooltip title={"Số câu hỏi part 1 được chọn phải là 6"} color="green" >
-                    <p style={{ position: "absolute", color: row.selectedRowKeys.length === 25 ? 'green' : 'red' }}>
+                <Tooltip title={"Số đoạn văn được chọn phải là 13"} color="green" >
+                    <p style={{ position: "absolute", color: row.selectedRowKeys.length === 4 ? 'green' : 'red' }}>
                         {row.selectedRowKeys.length}
                     </p>
                     <QuestionCircleOutlined style={{ marginLeft: 20, cursor: 'pointer' }} />
@@ -79,17 +88,21 @@ const Part2 = ({ row }) => {
                                     margin: "0px 8px",
                                 }}
                             >
-                                Lời giải: {record.description}
+                                Câu hỏi: {record.listQues.map((item, index) =>
+                                (<p>
+                                    {item.content}
+                                </p>))
+                                }
                             </p>
                         ),
                     }}
                     rowKey={"id"}
                     pagination={{ pageSize: 5, position: ['bottomCenter'] }}
-                    dataSource={(!isLoadingQues && !isErrorQues) ? questionPart2 : null}
+                    dataSource={(!isLoadingPara && !isErrorPara) ? paragraphs : null}
                 />
             </Col>
         </Row>
     );
 }
 
-export default Part2;
+export default Part6;

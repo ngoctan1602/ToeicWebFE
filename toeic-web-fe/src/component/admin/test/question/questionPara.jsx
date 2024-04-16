@@ -10,7 +10,7 @@ import { addQuestionWithParagraph } from "../../../../services/questionService";
 
 const propQuestionPara = []
 
-for (let index = 0; index < 3; index++) {
+for (let index = 0; index < 4; index++) {
     propQuestionPara.push({
         name: `question${index + 1}`,
         label: "Câu hỏi " + (index + 1),
@@ -53,23 +53,27 @@ const QuestionParagraph = ({ partSelected }) => {
     const [formQuestion1] = new Form.useForm()
     const [formQuestion2] = new Form.useForm()
     const [formQuestion3] = new Form.useForm()
-    formQuestion.push(formQuestion1, formQuestion2, formQuestion3)
+    const [formQuestion4] = new Form.useForm()
+    formQuestion.push(formQuestion1, formQuestion2, formQuestion3, formQuestion4)
 
     const formDescription = []
     const [formDescription1] = new Form.useForm()
     const [formDescription2] = new Form.useForm()
     const [formDescription3] = new Form.useForm()
-    formDescription.push(formDescription1, formDescription2, formDescription3)
+    const [formDescription4] = new Form.useForm()
+    formDescription.push(formDescription1, formDescription2, formDescription3, formDescription4)
 
     const formAnswer = []
     const [formAnswer1] = new Form.useForm()
     const [formAnswer2] = new Form.useForm()
     const [formAnswer3] = new Form.useForm()
-    formAnswer.push(formAnswer1, formAnswer2, formAnswer3)
+    const [formAnswer4] = new Form.useForm()
+    formAnswer.push(formAnswer1, formAnswer2, formAnswer3, formAnswer4)
 
     const [indexAnswer1, setIndex1] = useState(0);
     const [indexAnswer2, setIndex2] = useState(0);
     const [indexAnswer3, setIndex3] = useState(0);
+    const [indexAnswer4, setIndex4] = useState(0);
 
     const changeValueRadio = (index, value) => {
         if (index === 0) {
@@ -78,8 +82,11 @@ const QuestionParagraph = ({ partSelected }) => {
         else if (index === 1) {
             setIndex2(value)
         }
-        else {
+        else if (index === 2) {
             setIndex3(value)
+        }
+        else {
+            setIndex4(value)
         }
     }
     const getValueIndexSlected = (index) => {
@@ -89,8 +96,11 @@ const QuestionParagraph = ({ partSelected }) => {
         else if (index === 1) {
             return indexAnswer2
         }
-        else {
+        else if (index === 2) {
             return indexAnswer3
+        }
+        else {
+            return indexAnswer4
         }
     }
 
@@ -102,7 +112,7 @@ const QuestionParagraph = ({ partSelected }) => {
         if ([1, 2, 3, 4].includes(partSelected)) {
             addValue["audio"] = formPara.getFieldValue('fileAudio');
         }
-        if ([1, 3, 4, 7].includes(partSelected)) {
+        if ([1, 3, 4, 6, 7].includes(partSelected)) {
             addValue["image"] = formPara.getFieldValue('fileImage');
         }
         return addValue;
@@ -120,9 +130,12 @@ const QuestionParagraph = ({ partSelected }) => {
             // form = formAnswer2
             indexAnswer = indexAnswer2
         }
-        else {
+        else if (index === 2) {
             // form = formAnswer3
             indexAnswer = indexAnswer3
+        }
+        else {
+            indexAnswer = indexAnswer4
         }
         for (let i = 0; i < 4; i++) {
             addValue.push(
@@ -149,22 +162,39 @@ const QuestionParagraph = ({ partSelected }) => {
         const valueFormAnswer3 = setValueAddAnswer(2)
         const valueAnswer = []
         valueAnswer.push(valueFormAnswer1, valueFormAnswer2, valueFormAnswer3)
+        if (partSelected === 6) {
+            const valueFormAnswer4 = setValueAddAnswer(3)
+            valueAnswer.push(valueFormAnswer4)
+        }
         const checkAnswer1 = CheckValueField(valueFormAnswer1)
         const checkAnswer2 = CheckValueField(valueFormAnswer2)
         const checkAnswer3 = CheckValueField(valueFormAnswer3)
         const checkPara = CheckValueField(valueFormPara)
-        console.log(valueAnswer[0][3].isTrue)
+
         //Kieemr tra validate ok thif moiw add
         if (CheckValue(formQuestion1.getFieldValue("question"))
-            && CheckValue(formQuestion1.getFieldValue("question"))
-            && CheckValue(formQuestion1.getFieldValue("question"))
+            && CheckValue(formQuestion2.getFieldValue("question"))
+            && CheckValue(formQuestion3.getFieldValue("question"))
             && checkAnswer1 && checkAnswer2 && checkAnswer3 && checkPara
         ) {
+            if (partSelected === 6) {
+                formQuestion[3].submit();
+                formAnswer[3].submit()
+                const checkAnswer4 = CheckValueField(valueAnswer[3])
+                if (!checkAnswer4 || !formQuestion4.getFieldValue("question")) {
+
+                    console.log("Không ok")
+                    return
+                }
+
+            }
+            console.log("Ok nhé")
             var form_data = new FormData();
             for (var key in valueFormPara) {
                 form_data.append(key, valueFormPara[key]);
             }
-            for (let i = 0; i < 3; i++) {
+            const length = partSelected === 6 ? 4 : 3
+            for (let i = 0; i < length; i++) {
                 form_data.append(`questionParagraphRequests[${i}].contentQues`, formQuestion[i].getFieldValue("question"))
                 form_data.append(`questionParagraphRequests[${i}].descriptionQues`, formDescription[i].getFieldValue("description"))
                 for (let j = 0; j < 4; j++) {
@@ -172,6 +202,7 @@ const QuestionParagraph = ({ partSelected }) => {
                     form_data.append(`questionParagraphRequests[${i}].answerRequests[${j}].isTrue`, valueAnswer[i][j].isTrue);
                 }
             }
+
             addYearMutation.mutate(form_data)
             // console.log(form_data.get("questionParagraphRequests[0].answerRequests[0].content"))
         }
@@ -306,79 +337,159 @@ const QuestionParagraph = ({ partSelected }) => {
             <Row align={'middle'} gutter={[8, 8]}>
                 {
                     propQuestionPara.map((prop, index) => (
-                        <Col Col span={12}>
-                            <Form
-                                name={"formQuestion" + (index + 1)}
-                                form={formQuestion[index]}
-                                onFinish={(values) => console.log(values)}
-                            >
-                                <Form.Item
-                                    label={"Thêm câu hỏi thứ " + (index + 1)}
-                                    // name={"question" + (index + 1)}
-                                    name={"question"}
-                                    rules={[
-                                        {
-                                            required: true, message: "Không được bỏ trống"
-                                        },
-                                        {
-                                            min: 3, message: "Ít nhất 3 kí tự"
-                                        },
-                                        {
-                                            max: 60, message: "Nhiều nhất 60 kí tự"
-                                        },
-                                    ]}>
-                                    <Row>
-                                        <Col offset={1} flex={1}>
-                                            <TextArea allowClear rows={4}></TextArea>
-                                        </Col>
-                                    </Row>
-                                </Form.Item>
 
-                            </Form>
-                            <Form name="form"
-                                form={formAnswer[index]}
-                                onFinish={(values) => console.log(values)}
-                                style={{ width: "100%" }}
-                            >
-                                <Radio.Group
-                                    style={{ width: "100%" }}
-                                    buttonStyle='outline'
-                                    onChange={
-                                        (e) => changeValueRadio(index, e.target.value)
-                                    }
-                                    value={getValueIndexSlected(index)}
-                                >
-                                    {
-                                        propAnswer.map((prop, index) => (
+                        <>
+                            {
+                                index === 3 && partSelected === 6 &&
+                                <Col Col span={12}>
+                                    <Form
+                                        name={"formQuestion" + (index + 1)}
+                                        form={formQuestion[index]}
+                                        onFinish={(values) => console.log(values)}
+                                    >
+                                        <Form.Item
+                                            label={"Thêm câu hỏi thứ " + (index + 1)}
+                                            // name={"question" + (index + 1)}
+                                            name={"question"}
+                                            rules={[
+                                                {
+                                                    required: true, message: "Không được bỏ trống"
+                                                },
+                                                {
+                                                    min: 3, message: "Ít nhất 3 kí tự"
+                                                },
+                                                {
+                                                    max: 60, message: "Nhiều nhất 60 kí tự"
+                                                },
+                                            ]}>
+                                            <Row>
+                                                <Col offset={1} flex={1}>
+                                                    <TextArea allowClear rows={4}></TextArea>
+                                                </Col>
+                                            </Row>
+                                        </Form.Item>
 
-                                            <div
-                                                style={{ display: 'flex', alignItems: 'center', width: '100%' }}
-                                            >
-                                                <div style={
-                                                    { display: 'flex', alignItems: 'center', width: '100%' }
-                                                }>
-                                                    <Radio
-                                                        style={{ paddingBottom: 20 }} value={index}
+                                    </Form>
+                                    <Form name="form"
+                                        form={formAnswer[index]}
+                                        onFinish={(values) => console.log(values)}
+                                        style={{ width: "100%" }}
+                                    >
+                                        <Radio.Group
+                                            style={{ width: "100%" }}
+                                            buttonStyle='outline'
+                                            onChange={
+                                                (e) => changeValueRadio(index, e.target.value)
+                                            }
+                                            value={getValueIndexSlected(index)}
+                                        >
+                                            {
+                                                propAnswer.map((prop, index) => (
+
+                                                    <div
+                                                        style={{ display: 'flex', alignItems: 'center', width: '100%' }}
                                                     >
-                                                    </Radio>
-                                                    <TextValidate prop={prop} ></TextValidate>
-                                                </div>
-                                            </div>
-                                        ))
-                                    }
+                                                        <div style={
+                                                            { display: 'flex', alignItems: 'center', width: '100%' }
+                                                        }>
+                                                            <Radio
+                                                                style={{ paddingBottom: 20 }} value={index}
+                                                            >
+                                                            </Radio>
+                                                            <TextValidate prop={prop} ></TextValidate>
+                                                        </div>
+                                                    </div>
+                                                ))
+                                            }
 
 
-                                </Radio.Group>
-                            </Form>
-                            <Form form={formDescription[index]} onFinish={(values) => console.log(values)}>
-                                <Form.Item label="Lời giải chi tiết" name="description">
-                                    <TextArea rows={4}>
-                                    </TextArea>
-                                </Form.Item>
-                            </Form>
+                                        </Radio.Group>
+                                    </Form>
+                                    <Form form={formDescription[index]} onFinish={(values) => console.log(values)}>
+                                        <Form.Item label="Lời giải chi tiết" name="description">
+                                            <TextArea rows={4}>
+                                            </TextArea>
+                                        </Form.Item>
+                                    </Form>
 
-                        </Col>
+                                </Col>
+                            }
+                            {
+                                index !== 3 &&
+                                <Col Col span={12}>
+                                    <Form
+                                        name={"formQuestion" + (index + 1)}
+                                        form={formQuestion[index]}
+                                        onFinish={(values) => console.log(values)}
+                                    >
+                                        <Form.Item
+                                            label={"Thêm câu hỏi thứ " + (index + 1)}
+                                            // name={"question" + (index + 1)}
+                                            name={"question"}
+                                            rules={[
+                                                {
+                                                    required: true, message: "Không được bỏ trống"
+                                                },
+                                                {
+                                                    min: 3, message: "Ít nhất 3 kí tự"
+                                                },
+                                                {
+                                                    max: 60, message: "Nhiều nhất 60 kí tự"
+                                                },
+                                            ]}>
+                                            <Row>
+                                                <Col offset={1} flex={1}>
+                                                    <TextArea allowClear rows={4}></TextArea>
+                                                </Col>
+                                            </Row>
+                                        </Form.Item>
 
+                                    </Form>
+                                    <Form name="form"
+                                        form={formAnswer[index]}
+                                        onFinish={(values) => console.log(values)}
+                                        style={{ width: "100%" }}
+                                    >
+                                        <Radio.Group
+                                            style={{ width: "100%" }}
+                                            buttonStyle='outline'
+                                            onChange={
+                                                (e) => changeValueRadio(index, e.target.value)
+                                            }
+                                            value={getValueIndexSlected(index)}
+                                        >
+                                            {
+                                                propAnswer.map((prop, index) => (
+
+                                                    <div
+                                                        style={{ display: 'flex', alignItems: 'center', width: '100%' }}
+                                                    >
+                                                        <div style={
+                                                            { display: 'flex', alignItems: 'center', width: '100%' }
+                                                        }>
+                                                            <Radio
+                                                                style={{ paddingBottom: 20 }} value={index}
+                                                            >
+                                                            </Radio>
+                                                            <TextValidate prop={prop} ></TextValidate>
+                                                        </div>
+                                                    </div>
+                                                ))
+                                            }
+
+
+                                        </Radio.Group>
+                                    </Form>
+                                    <Form form={formDescription[index]} onFinish={(values) => console.log(values)}>
+                                        <Form.Item label="Lời giải chi tiết" name="description">
+                                            <TextArea rows={4}>
+                                            </TextArea>
+                                        </Form.Item>
+                                    </Form>
+
+                                </Col>
+                            }
+                        </>
                     ))
                 }
             </Row >
@@ -389,7 +500,7 @@ const QuestionParagraph = ({ partSelected }) => {
                     </Button>
                 </Col>
             </Row>
-        </div>
+        </div >
     );
 }
 

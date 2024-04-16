@@ -4,6 +4,9 @@ import * as BaseApi from '../api/BaseAPI'
 export const getYear = async () => {
     return await BaseApi.getItems("year/getAll")
 }
+export const getYearByTopicId = async (idTopic) => {
+    return await BaseApi.getItems("year/topic", idTopic)
+}
 export const addYear = async (year) => {
     return (await BaseApi.postItem('year/add', year))
 }

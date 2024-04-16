@@ -12,6 +12,7 @@ import CheckValueField from "../../../common/checkUndefinedValue";
 import { useGlobalState } from "../../../common/globaleState";
 import FormItem from "antd/es/form/FormItem";
 import QuestionParagraph from "./questionPara";
+import QuestionPara7 from "./questionPara7";
 const propAnswer = []
 for (let index = 0; index < 4; index++) {
     propAnswer.push({
@@ -349,12 +350,16 @@ const AddQuetion = () => {
                 }
                 {/* Tạo câu hỏi p3 4 6 7  */}
                 {
-                    ([3, 4, 6, 7].includes(partSelected)) &&
+                    ([3, 4, 6].includes(partSelected)) &&
                     <div style={{ margin: "16px 0px", width: "100%" }}>
                         <QuestionParagraph partSelected={partSelected}>
 
                         </QuestionParagraph>
                     </div>
+                }
+                {
+                    partSelected === 7 &&
+                    < QuestionPara7 />
                 }
 
                 {/* // này là tạo đáp án */}
@@ -366,12 +371,9 @@ const AddQuetion = () => {
                             // onFinish={(values) => console.log(form.getFieldValue("answer1"))}
                             style={{ width: "100%" }}
                         >
-
                             <Radio.Group
                                 style={{ width: "100%" }}
                                 buttonStyle='outline' onChange={(e) => setIndex(e.target.value)} value={indexAnswer} >
-
-
                                 {
                                     propAnswer.map((prop, index) => (
 

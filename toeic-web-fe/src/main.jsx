@@ -6,6 +6,8 @@ import { BrowserRouter } from 'react-router-dom'
 import { GlobalStateProvider } from './component/common/globaleState.jsx'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { ReactQueryDevtools } from 'react-query/devtools'
+import '@fortawesome/fontawesome-free/css/all.min.css';
+
 const queryClient = new QueryClient()
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

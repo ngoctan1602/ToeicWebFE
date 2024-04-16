@@ -11,6 +11,8 @@ export const GlobalStateProvider = ({ children }) => {
         handle: false,
         message: '',
         success: false,
+        token: null,
+        role: null,
     });
 
     return (
