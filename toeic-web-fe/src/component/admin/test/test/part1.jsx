@@ -1,4 +1,4 @@
-import { Col, Form, Row, Select, Table, Tooltip } from "antd";
+import { Col, Form, Row, Select, Table, Tooltip, Input } from "antd";
 import { useGlobalState } from "../../../common/globaleState";
 import * as YearSV from "../../../../services/yearService";
 import * as TopicSV from "../../../../services/topicService";
@@ -34,7 +34,7 @@ const columns = [
     },
 ];
 
-const Part1 = ({ year, topic, row }) => {
+const Part1 = ({ name, year, topic, row }) => {
     const { globalState, setGlobalState } = useGlobalState();
     const handleChange = (value, isYear) => {
         if (isYear) {
@@ -45,6 +45,12 @@ const Part1 = ({ year, topic, row }) => {
         }
     };
     const [years, setYears] = useState([])
+    const {
+        isLoadingQues,
+        isErrorQues,
+        errorQues,
+        data: getQuestion
+    } = useQuery("getQuestion", () => QuestionSV.getQuestionByPartId(1))
     const {
         isLoading,
         isError,
@@ -60,49 +66,35 @@ const Part1 = ({ year, topic, row }) => {
         data: getTopic
     } = useQuery("getTopic", TopicSV.getTopic)
 
-    const {
-        isLoadingQues,
-        isErrorQues,
-        errorQues,
-        data: getQuestion
-    } = useQuery("getQuestion", () => QuestionSV.getQuestionByPartId(1))
-
     const [questionPart1, setQuestionPart1] = useState([])
 
     useEffect(() => {
         if (globalState.connect) {
-            if (!isLoading && !isError) {
+            // Fetch data for year
+            if (!isLoading && !isError && getYear !== null && getYear !== undefined) {
                 const updateYear = getYear.data.map(element => ({
                     value: element.id,
                     label: element.year
                 }));
                 setYears(updateYear);
             }
-        }
 
-    }, [isLoading, globalState.connect, isErrorQues]);
-
-    useEffect(() => {
-        if (globalState.connect) {
-            if (!isLoadingQues && !isErrorQues) {
-                setQuestionPart1(getQuestion.data)
-
-            }
-        }
-    }, [isLoadingQues, globalState.connect, isErrorQues]);
-    useEffect(() => {
-        if (globalState.connect) {
-
-            if (!isLoadingTopic && !isErrorTopic) {
-                const updateYear = getTopic.data.map(element => ({
+            // Fetch data for topic
+            if (!isLoadingTopic && !isErrorTopic && getTopic !== null && getTopic !== undefined) {
+                const updateTopic = getTopic.data.map(element => ({
                     value: element.id,
                     label: element.name
                 }));
-                setTopics(updateYear);
+                setTopics(updateTopic);
+            }
+
+            // Fetch data for questions
+            if (!isLoadingQues && !isErrorQues && getQuestion !== null && getQuestion !== undefined) {
+                setQuestionPart1(getQuestion.data);
             }
         }
+    }, [globalState.connect, isLoading, isError, getYear, isLoadingTopic, isErrorTopic, getTopic, isLoadingQues, isErrorQues, getQuestion]);
 
-    }, [globalState.connect, isLoadingTopic, isErrorTopic]);
 
     // const [selectedRowKeys, setSelectedRowKeys] = useState([]);
 
@@ -115,7 +107,17 @@ const Part1 = ({ year, topic, row }) => {
         onChange: onSelectChange,
     };
     return (
-        <Row align={"middle"} gutter={[16, 16]}>
+        <Row align={"middle"} gutter={[16, 16]} style={{ width: "100%" }}>
+            <Row style={{ width: "100%" }} align={"middle"} gutter={[16, 16]}>
+                <Col span={2} offset={0}>
+                    Tên đề thi
+                </Col>
+                <Col span={20}>
+
+                    <Input value={name.nameTest} onChange={(e) => name.setNameTest(e.target.value)}>
+                    </Input>
+                </Col>
+            </Row>
             <Col span={2}>
                 Chọn năm
             </Col>

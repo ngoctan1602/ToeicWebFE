@@ -20,32 +20,31 @@ const columns = [
         key: 'content',
     },
     {
-        title: 'Âm thanh',
-        dataIndex: 'audio',
-        key: 'audio',
-        render: (text) => <audio controls> <source src={text}></source></audio>
+        title: 'Lời giải',
+        dataIndex: 'description',
+        key: 'description',
     },
 ];
 
-const Part2 = ({ row }) => {
+const Part5 = ({ row }) => {
     const { globalState, setGlobalState } = useGlobalState();
 
     const {
         isLoadingQues,
         isErrorQues,
         errorQues,
-        data: getQuestionPart2
-    } = useQuery("getQuestionPart2", () => QuestionSV.getQuestionByPartId(2))
+        data: getQuestionPart5
+    } = useQuery("getQuestionPart5", () => QuestionSV.getQuestionByPartId(5))
 
-    const [questionPart2, setQuestionPart2] = useState([])
+    const [questionPart5, setQuestionPart5] = useState([])
 
     useEffect(() => {
         if (globalState.connect) {
-            if (!isLoadingQues && !isErrorQues && getQuestionPart2 !== undefined) {
-                setQuestionPart2(getQuestionPart2.data)
+            if (!isLoadingQues && !isErrorQues && getQuestionPart5 !== undefined) {
+                setQuestionPart5(getQuestionPart5.data)
             }
         }
-    }, [isLoadingQues, globalState.connect, isErrorQues, getQuestionPart2]);
+    }, [isLoadingQues, globalState.connect, isErrorQues, getQuestionPart5]);
 
     const onSelectChange = (selectedRowKeys) => {
         updateValue(row.setSelectedRowKeys, selectedRowKeys);
@@ -55,14 +54,14 @@ const Part2 = ({ row }) => {
         onChange: onSelectChange,
     };
     return (
-        <Row align={"middle"} gutter={[16, 16]}>
+        <Row align={"middle"} gutter={[16, 16]} style={{ width: "100%" }}>
             <Col offset={19} span={3}>
                 Số câu đã chọn
             </Col>
             <Col span={2}
             >
                 <Tooltip title={"Số câu hỏi part 1 được chọn phải là 6"} color="green" >
-                    <p style={{ position: "absolute", color: row.selectedRowKeys.length === 25 ? 'green' : 'red' }}>
+                    <p style={{ position: "absolute", color: row.selectedRowKeys.length === 30 ? 'green' : 'red' }}>
                         {row.selectedRowKeys.length}
                     </p>
                     <QuestionCircleOutlined style={{ marginLeft: 20, cursor: 'pointer' }} />
@@ -72,24 +71,13 @@ const Part2 = ({ row }) => {
                 <Table
                     rowSelection={rowSelection}
                     columns={columns}
-                    expandable={{
-                        expandedRowRender: (record) => (
-                            <p
-                                style={{
-                                    margin: "0px 8px",
-                                }}
-                            >
-                                Lời giải: {record.description}
-                            </p>
-                        ),
-                    }}
                     rowKey={"id"}
                     pagination={{ pageSize: 5, position: ['bottomCenter'] }}
-                    dataSource={(!isLoadingQues && !isErrorQues) ? questionPart2 : null}
+                    dataSource={(!isLoadingQues && !isErrorQues) ? questionPart5 : null}
                 />
             </Col>
         </Row>
     );
 }
 
-export default Part2;
+export default Part5;

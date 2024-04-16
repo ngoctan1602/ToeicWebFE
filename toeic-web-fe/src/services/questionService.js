@@ -11,3 +11,8 @@ export const addQuestionWithParagraph = async (paragraph) => {
 export const getQuestionByPartId = async (idPart) => {
     return (await BaseApi.getItems(`question/${idPart}`))
 }
+
+
+export const getParagraphByPartAndType = async (params) => {
+    return await BaseApi.getItems("question/getByPartAndType", params)
+}

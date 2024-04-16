@@ -1,0 +1,41 @@
+.flex-display {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    // text-align: center;
+    align-items: center;
+    height: 100%;
+    padding: 4px;
+    margin: 8px 0;
+}
+
+.p-flex {
+    width: 200px;
+    height: 40px;
+    padding: 0px 8px;
+    // border: 1px solid;
+    margin: 0px 8px;
+    box-shadow: rgba(17, 17, 26, 0.05) 0px 1px 0px, rgba(17, 17, 26, 0.1) 0px 0px 8px; // margin: 0px 8px;
+    align-content: center;
+    font-size: 16px;
+    cursor: pointer;
+    text-align: center;
+
+    // background-color: #51829B;
+    &:hover {
+        // background-color: #9BB0C1;
+        // border-radius: 10%;
+        color: #51829B;
+        // font-size: 20px;
+        border: 1px solid #51829B;
+        text-decoration: underline;
+        transition-duration: 0.05s;
+        transition-timing-function: cubic-bezier(0.075, 0.82, 0.165, 1);
+    }
+}
+
+.button-card:hover {
+    text-decoration: underline;
+    color: #51829B;
+    transition-timing-function: cubic-bezier(0.075, 0.82, 0.165, 1);
+}
