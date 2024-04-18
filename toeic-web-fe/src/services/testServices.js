@@ -6,3 +6,6 @@ export const createNewTest = async (test) => {
 export const getTestByYearAndTopic = async (param) => {
     return await BaseApi.getItems("/test/topic/year", param)
 }
+export const getTestById = async (param) => {
+    return await BaseApi.getItems("/test", param)
+}

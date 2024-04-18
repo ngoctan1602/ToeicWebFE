@@ -8,6 +8,7 @@ const TextValidate = ({ prop, hasDefault, style }) => {
                     ...style,
                     width: '100%'
                 }}
+
             hasFeedback
             label={prop.label}
             name={prop.name}
@@ -24,8 +25,12 @@ const TextValidate = ({ prop, hasDefault, style }) => {
                 },
             ]}
         >
-            <Input allowClear type='text'
-            />
+            {
+                prop.password ?
+                    <Input.Password allowClear></Input.Password>
+                    :
+                    <Input allowClear type='text' />
+            }
         </Form.Item>
     );
 }
