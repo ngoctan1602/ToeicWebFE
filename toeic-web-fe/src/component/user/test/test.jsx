@@ -114,22 +114,7 @@ const GetTestByYearAndTopic = ({ topicSelected, yearSelected }) => {
                         style={{ width: "600px" }}
                     />
                     : (!isError && test.length > 0) ?
-                        // <div className="flex-display">
-                        //     {
-                        //         test.map((item, index) => (
-                        //             <p
-                        //                 // style={{ background: item.id === yearSelected.yearSelected && "#CCD3CA" }}
-                        //                 key={index} className="p-flex"
-                        //             // onClick={() => yearSelected.setYearSelected(item.id)}
-                        //             >
-                        //                 {item.name}
-                        //             </p>
 
-                        //             // <p key={index} className="p-flex"
-                        //             // >{item.year}</p>
-                        //         ))
-                        //     }
-                        // </div>
                         <div style={{ padding: 8, display: "flex", flexWrap: 'wrap' }}>
                             {
                                 test.map((item, index) => (

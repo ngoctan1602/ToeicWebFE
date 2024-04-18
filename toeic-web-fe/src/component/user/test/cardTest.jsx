@@ -14,7 +14,7 @@ const CardTest = ({ item }) => {
             }}
         >
             <Card
-                onClick={() => navigate(`/admin/test/${item.idTest}`)}
+                onClick={() => navigate(`/test/${item.idTest}`, { state: { id: item.idTest } })}
                 // bordered={false}
                 hoverable
                 style={{ width: 280, minHeight: 200, margin: "8px 8px" }}
