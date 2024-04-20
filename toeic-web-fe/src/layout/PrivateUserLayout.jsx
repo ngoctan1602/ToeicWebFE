@@ -3,9 +3,10 @@ import { Breadcrumb, Layout, Menu, theme } from 'antd';
 const { Header, Content, Footer } = Layout;
 import { Route, useNavigate, Routes } from 'react-router';
 import { UserRoutes } from "../router"
-import { faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
 import { checkExpiredToken } from '../services/authServices';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faLongArrowAltDown, faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
+import { icon } from '@fortawesome/fontawesome-svg-core';
 
 const items = [
     {
@@ -16,6 +17,7 @@ const items = [
         key: '/test',
         label: "Đề thi online",
     },
+
     checkExpiredToken() ? {
         key: '/logout',
         icon: faRightFromBracket
@@ -24,20 +26,21 @@ const items = [
             key: '/login',
             label: "Đăng nhập",
         }
+
 ]
-const UserLayout = ({ children }) => {
+const PrivateUserLayout = ({ children }) => {
+    useEffect(() => {
+        !checkExpiredToken()
+            && navigate('/login')
+    }, [])
     const {
         token: { colorBgContainer, borderRadiusLG },
     } = theme.useToken();
+    const navigate = useNavigate();
     const logout = () => {
         navigate('/login')
-        setTimeout(
-            () => {
-                localStorage.clear()
-            }, [2000]
-        )
+        localStorage.removeItem("accessToken")
     }
-    const navigate = useNavigate();
     return (
         <Layout style={{ width: "100%", minHeight: "100vh" }}>
             <Header
@@ -56,6 +59,7 @@ const UserLayout = ({ children }) => {
                     theme="dark"
                     mode="horizontal"
                     defaultSelectedKeys={['2']}
+
                     // items={items}
                     style={{
                         flex: 1,
@@ -99,35 +103,6 @@ const UserLayout = ({ children }) => {
     );
 };
 
-// const GetContent = () => {
-//     const [routes, setRoutes] = useState([]);
-//     useEffect(() => {
-//         const routes = [];
-//         for (let key in UserRoutes) {
-//             let Com = UserRoutes[key].component ? UserRoutes[key].component : null
-//             console.log(Com)
-//             routes.push(
-//                 <Route path={UserRoutes[key].path} element={Com !== null && <Com></Com>}>
-
-//                 </Route >)
-//             console.log(key)
-//         }
-//         setRoutes(routes)
-//     }, [])
-//     return (
-//         <div style={{ minheight: '480px', width: '100%' }}>
-//             <Routes>
-//                 {
-//                     routes.length > 0 &&
-//                     routes.map((item, index) => (
-//                         item
-//                     ))
-//                 }
-
-//             </Routes>
-//         </div>
-//     )
-// }
-export default UserLayout;
+export default PrivateUserLayout;
 
 

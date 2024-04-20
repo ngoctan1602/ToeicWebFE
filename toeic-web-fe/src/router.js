@@ -1,7 +1,9 @@
 import AddQuetion from "./component/admin/test/question/addQuestion";
 import AddNewTest from "./component/admin/test/test/addTest";
 import ManageYearTopicOfTest from "./component/admin/test/topic_year/manageTest";
+import Logout from "./component/user/common/logout";
 import Login from "./component/user/login/login";
+import Practice from "./component/user/practice/practice";
 import Test from "./component/user/test/test";
 import TestOverView from "./component/user/test/testOverview";
 
@@ -37,4 +39,16 @@ export const UserRoutes = [
         path: 'login',
         component: Login
     }
+]
+
+
+export const PrivateUserRoutes = [
+    {
+        path: '/practice/:id',
+        component: Practice
+    },
+    // {
+    //     path: '/logout',
+    //     component: Logout
+    // }
 ]
