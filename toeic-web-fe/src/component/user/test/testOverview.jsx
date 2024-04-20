@@ -19,6 +19,7 @@ import * as TestSV from '../../../services/testServices'
 import { useQuery } from 'react-query';
 import { getValueCheck, updateSelectedList } from '../../common/selectedList';
 import { useGlobalState } from '../../common/globaleState';
+import { useNavigate } from 'react-router-dom';
 const TestOverView = () => {
     const location = useLocation();
     const pathParts = location.pathname.split("/");
@@ -108,24 +109,25 @@ const GetOverViewTest = ({ id }) => {
                 (!isLoading && !isError && test != null && test.partResponse.length > 0)
                 &&
 
-                <GetTab parts={test.partResponse}></GetTab>
+                <GetTab parts={test.partResponse} testId={id}></GetTab>
             }
         </div>
     )
 
 }
-const GetTab = ({ parts }) => {
+const GetTab = ({ parts, testId }) => {
     const { globalState, setGlobalState } = useGlobalState();
     const [checkedItems, setCheckedItems] = useState({});
+    const navigate = useNavigate();
     const startTest = () => {
         const listId = getValueCheck(checkedItems)
         if (listId.length === 0) {
             setGlobalState({ ...globalState, handle: true, message: "Vui lòng chọn phần thi" })
             console.log("Hello")
         }
-
-        console.log(time)
+        const queryString = listId.map(part => `part=${part}`).join('&');
         console.log(timeSelected)
+        navigate(`/practice/${testId}/?${queryString}` + `&time_limit=${timeSelected}`)
     }
     const time = Array(Math.ceil(135 / 5)).fill().map((_, idx) => {
         const value = (idx + 1) * 5;

@@ -3,6 +3,8 @@ $background-color-active: #bebebe;
 $background-color-hover: #cfcfcf;
 $text-color-warning: #FF9800;
 $background-color-protips: #D9EDBF;
+$background-color-blue-light: #67C6E3;
+// $text-color-blue-light: #E0F4FF;
 $radius-min: 6px;
 
 .font-test {
@@ -63,9 +65,25 @@ $radius-min: 6px;
         background-color: $background-color-active;
     }
 
-    &:not(.active):hover {
+    &.active-blue {
+        // color: $text-color-blue-light;
+        background-color: $background-color-blue-light;
+
+    }
+
+    // &:not(.active):hover {
+    //     background-color: $background-color-hover;
+    // }
+
+    // &:hover {
+    //     background-color: $background-color-hover;
+    // }
+
+    &:not(.active):not(.active-blue):hover {
         background-color: $background-color-hover;
     }
+
+
 }
 
 .p-flex {

@@ -3,7 +3,7 @@ import './App.css';
 import { Flip, ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
-import { AdminRouter, UserRoutes } from './router';
+import { AdminRouter, PrivateUserRoutes, UserRoutes } from './router';
 import { GlobalStateProvider, useGlobalState } from './component/common/globaleState';
 
 import { checkUrlOnline } from './api/BaseAPI';
@@ -11,6 +11,8 @@ import './styles/styles.scss'
 import UserLayout from './layout/UserLayout';
 import AdminLayout from './layout/AdminLayout';
 import NotFoundPage from './component/common/notFound';
+import PrivateUserLayout from './layout/PrivateUserLayout';
+import { checkExpiredToken } from './services/authServices';
 
 
 const App = () => {
@@ -82,6 +84,22 @@ const App = () => {
             )}
           />
         ))}
+
+        {PrivateUserRoutes.map((route, index) => (
+          <Route
+            key={index}
+            path={route.path}
+            element={(
+              <PrivateUserLayout>
+                {
+
+                  <route.component />
+                }
+              </PrivateUserLayout>
+            )}
+          />
+        ))}
+
         <Route path="*" element={<NotFoundPage />} />
 
       </Routes>
