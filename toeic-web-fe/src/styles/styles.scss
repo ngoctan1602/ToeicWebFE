@@ -7,6 +7,17 @@ $background-color-blue-light: #67C6E3;
 // $text-color-blue-light: #E0F4FF;
 $radius-min: 6px;
 
+
+.button-confirm {
+    border: 1px solid $background-color-blue-light;
+
+    // color: #cfcfcf;
+    &:hover {
+        // background-color: #51829B;
+        color: red;
+    }
+}
+
 .font-test {
     font-size: 24px;
     font-weight: bold;

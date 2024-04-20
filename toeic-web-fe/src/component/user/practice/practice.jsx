@@ -3,10 +3,10 @@ import * as QuestionSv from '../../../services/questionService'
 import * as TestSv from '../../../services/testServices'
 import UseMutationCustom from "../../common/useMutationCustom";
 import { useQuery } from "react-query";
-import { Button, Divider, Row } from "antd";
+import { Button, Col, Divider, Row } from "antd";
 import { useNavigate } from "react-router";
 import CountdownTimer from "../common/countdown.";
-
+import clock from "../../../assets/clock.png"
 const Practice = () => {
     const urlParams = new URLSearchParams(window.location.search);
     const pathVariable = window.location.pathname.split('/').filter(Boolean).pop();
@@ -95,11 +95,40 @@ const Practice = () => {
                 {/* <CountdownTimer totalMinutes={parseInt(time)} /> */}
             </div>
             <Divider></Divider>
-            <Row style={{ background: 'red', minHeight: 400 }}>
-
+            <Row style={{ minHeight: 400 }}>
+                <Col span={20}>
+                    1
+                </Col>
+                <Col span={4} style={{ padding: 8, boxShadow: 'rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px' }}>
+                    <CountdownTimer totalMinutes={parseInt(time)} />
+                    {
+                        (!isLoading && !isError && questions) &&
+                        <GetButtonQuestion questions={questions.data}></GetButtonQuestion>
+                    }
+                </Col>
             </Row>
-        </div>
+        </div >
     );
+}
+
+const GetButtonQuestion = ({ questions }) => {
+    // console.log(questions)
+    return (
+        <Row style={{ display: 'flex', flexWrap: 'wrap', padding: 8 }} gutter={[4, 4]}>
+            {
+                questions.map((item, index) => (
+                    <Col span={8}>
+                        <Button style={{ width: '100%' }}>
+                            {
+                                //  item.questionDTO.id
+                                index + 1
+                            }
+                        </Button>
+                    </Col>
+                ))
+            }
+        </Row>
+    )
 }
 
 export default Practice;

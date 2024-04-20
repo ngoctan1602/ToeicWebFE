@@ -1,7 +1,8 @@
 import { faClock, faClockFour, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useState, useEffect } from 'react';
-
+import clock from "../../../assets/clock.png"
+import { Button } from 'antd';
 const CountdownTimer = ({ totalMinutes }) => {
     const totalSeconds = totalMinutes * 60;
     const [seconds, setSeconds] = useState(totalSeconds);
@@ -30,14 +31,20 @@ const CountdownTimer = ({ totalMinutes }) => {
     const displaySeconds = remainingSeconds % 60;
 
     return (
-        <div style={{ display: 'flex', alignItems: 'center' }}>
-            <FontAwesomeIcon icon={faClockFour} />
-            <div style={{ margin: '0px 8px' }}>
+        // display: 'flex', alignItems: 'center', width: '100%', background: 'red'
+        <div style={{ width: '100%' }}>
+            {/* <FontAwesomeIcon icon={faClockFour} /> */}
+            <p style={{ width: '100%', fontSize: 16, textAlign: 'center' }}>Thời gian làm bài</p>
+            <div style={{ margin: '8px 0px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16 }}>
+                <img src={clock} style={{ width: 50, height: 50 }}></img>
                 {displayHours.toString().padStart(2, '0')}:
                 {displayMinutes.toString().padStart(2, '0')}:
                 {displaySeconds.toString().padStart(2, '0')}
             </div>
-        </div>
+            <Button style={{ width: '100%' }} className='button-confirm '>
+                Nộp bài
+            </Button>
+        </div >
     );
 };
 
