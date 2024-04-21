@@ -41,9 +41,9 @@ const CountdownTimer = ({ totalMinutes }) => {
                 {displayMinutes.toString().padStart(2, '0')}:
                 {displaySeconds.toString().padStart(2, '0')}
             </div>
-            <Button style={{ width: '100%' }} className='button-confirm '>
+            {/* <Button style={{ width: '100%' }} className='button-confirm '>
                 Nộp bài
-            </Button>
+            </Button> */}
         </div >
     );
 };
