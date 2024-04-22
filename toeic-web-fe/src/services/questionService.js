@@ -20,3 +20,8 @@ export const getParagraphByPartAndType = async (params) => {
 export const getQuestionByTestAndPart = async (params) => {
     return await BaseApi.getItems("/question/", params)
 }
+
+export const getQuestionByTestAndPartAndParagraph = async (params) => {
+    return await BaseApi.getItems("/question/paragraph", params)
+}
+

@@ -3,7 +3,7 @@ import * as QuestionSv from '../../../services/questionService'
 import * as TestSv from '../../../services/testServices'
 import UseMutationCustom from "../../common/useMutationCustom";
 import { useQuery } from "react-query";
-import { Button, Col, Divider, Radio, Row } from "antd";
+import { BackTop, Button, Col, Divider, Radio, Row } from "antd";
 import { useNavigate } from "react-router";
 import CountdownTimer from "../common/countdown.";
 import clock from "../../../assets/clock.png"
@@ -58,7 +58,13 @@ const Practice = () => {
         () => QuestionSv.getQuestionByTestAndPart({ idTest: pathVariable, idPart: curentPart })
     );
 
+    const { data: questionPara, isLoadingQuestionPara, isErrorQuestionPara }
+        = useQuery(['questionPara', curentPart],
+            () => QuestionSv.getQuestionByTestAndPartAndParagraph({ idTest: pathVariable, idPart: curentPart })
+        );
+
     const [selectedPart1, setSelectedPart1] = useState({});
+    const [selectedPart2, setSelectedPart2] = useState({});
     useEffect(() => {
         if (!isLoading && !isError) {
             // setNameTest(getTest.data)
@@ -77,8 +83,26 @@ const Practice = () => {
         }
     }, [isLoading, isError, questions, curentPart, selectedPart1])
 
+    useEffect(() => {
+        if (!isLoading && !isError) {
+            // setNameTest(getTest.data)
+            if (questions !== undefined) {
+                if (questions.data !== undefined) {
+                    if (parseInt(curentPart) === 2 && !selectedPart2) {
+                        // console.log(questions)
+                        const newObj = questions.data.reduce((acc, obj) => {
+                            acc[obj.questionDTO.id] = 0;
+                            return acc;
+                        }, {});
+                        setSelectedPart1(newObj)
+                    }
+                }
+            }
+        }
+    }, [isLoading, isError, questions, curentPart, selectedPart2])
+
     const handleChangePart = (idPart) => {
-        setCurrentPart(idPart);
+        setCurrentPart(idPart)
     };
 
 
@@ -106,13 +130,12 @@ const Practice = () => {
                     parts.length > 1 ?
                         parts.map((part, index) => (
                             <p onClick={() => handleChangePart(part)}
-                                className={curentPart === part ? "padding-p active-blue" : "padding-p"} >Part {part}</p>
+                                className={(curentPart === part) ? "padding-p active-blue" : "padding-p"} >Part {part}</p>
                         ))
                         :
                         <p onClick={() => handleChangePart(parts)}
                             className={"padding-p active-blue"} >Part {parts}</p>
                 }
-                {/* <CountdownTimer totalMinutes={parseInt(time)} /> */}
             </div>
             <Divider></Divider>
             <Row style={{ minHeight: 400 }}>
@@ -122,16 +145,36 @@ const Practice = () => {
                         parseInt(curentPart) === 1 &&
                         <Part1 questions={questions.data} selectedPart1={{ selectedPart1: selectedPart1, setSelectedPart1: setSelectedPart1 }} />
                     }
+
+                    {
+                        (!isLoading && !isError && questions) &&
+                        parseInt(curentPart) === 2 &&
+                        <Part2 questions={questions.data}
+                            selectedPart2={{ selectedPart2: selectedPart2, setSelectedPart2: setSelectedPart2 }}
+                        />
+                    }
+
+                    {
+                        (!isLoadingQuestionPara && !isErrorQuestionPara && questionPara) &&
+                        parseInt(curentPart) === 3 &&
+                        <Part3 questions={questionPara.data}
+                            selectedPart2={{ selectedPart2: selectedPart2, setSelectedPart2: setSelectedPart2 }}
+                        />
+                    }
                 </Col>
-                <Col span={4} style={{ maxHeight: 1000, padding: 8, boxShadow: 'rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px' }}>
+                <Col span={4} style={{
+                    maxHeight: 1000, padding: 8,
+                    // boxShadow: 'rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px'
+                }}>
                     <CountdownTimer totalMinutes={parseInt(time)} />
                     {
                         (!isLoading && !isError && questions) &&
                         <GetButtonQuestion questions={questions.data}></GetButtonQuestion>
                     }
-
                 </Col>
             </Row>
+
+            <BackTop></BackTop>
         </div >
     );
 }
@@ -201,8 +244,11 @@ const Part1 = ({ questions, selectedPart1 }) => {
                 questions &&
                 questions.map((question, index) =>
                 (
-                    <Row style={{ padding: 8, width: '100%', margin: '4px 0px', minHeight: 200 }} gutter={[8, 8]}>
-                        <Col span={10} style={{ height: 450, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Row style={{
+                        padding: 8, width: '100%', margin: index !== 0 && '8px 0px', minHeight: 200
+                        , boxShadow: 'rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px'
+                    }} gutter={[8, 8]}>
+                        <Col span={8} style={{ height: 400, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                             <div style={{ maxWidth: '100%', maxHeight: '100%', overflow: 'auto' }}>
                                 <img style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center' }} src={question.questionDTO.image} alt="Question Image" />
                             </div>
@@ -257,6 +303,167 @@ const Part1 = ({ questions, selectedPart1 }) => {
         </div >
     )
 }
+const Part2 = ({ questions, selectedPart2 }) => {
+
+    const contentAnswer = [
+        "A", "B", "C"
+    ]
+
+
+    const handleSelected = (questionId, answerId) => {
+        selectedPart2.setSelectedPart2({ ...selectedPart2.selectedPart2, [questionId]: answerId })
+    }
+    return (
+        <div>
+            {
+                questions &&
+                questions.map((question, index) =>
+                (
+                    <Row style={{
+                        padding: 8, width: '100%', margin: index !== 0 && '8px 0px', minHeight: 200
+                        , boxShadow: 'rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px'
+                    }} gutter={[8, 8]}>
+                        <Col offset={1} span={20}>
+                            <div style={{ width: '100%', display: 'flex', alignItems: 'center' }}>
+
+                                <p style={{ fontWeight: 500, borderRadius: '50%', background: '#cfcfcf', padding: 12, margin: '0 8px' }}>
+                                    {/* {index + 1} */}
+                                    {question.questionDTO.id}
+                                </p>
+                                <audio controls>
+                                    <source src={question.questionDTO.audio}></source>
+                                </audio>
+                            </div>
+                            <Radio.Group
+                                value={selectedPart2.selectedPart2[question.questionDTO.id]}
+                                // value={selected[question.questionDTO.id]}
+                                onChange={(e) => handleSelected(question.questionDTO.id, e.target.value)}
+                            >
+                                {
+                                    question.answerList.map((answer, index) => (
+                                        <div style={{ width: '100%' }}>
+                                            <Radio value={answer.id}>
+                                                {/* <p>
+                                                    {answer.content}
+                                                </p> */}
+                                                {/* <p>
+
+                                                    {answer.id}
+                                                </p> */}
+                                                <p>
+                                                    {contentAnswer[index]}
+
+                                                    {/* {answer.content} */}
+                                                </p>
+                                            </Radio>
+                                        </div>
+                                    ))
+                                }
+                            </Radio.Group>
+                        </Col>
+                    </Row>
+                )
+                )
+            }
+        </div >
+    )
+}
+
+const Part3 = ({ questions }) => {
+
+
+
+    // const handleSelected = (questionId, answerId) => {
+    //     selectedPart2.setSelectedPart2({ ...selectedPart2.selectedPart2, [questionId]: answerId })
+    // }
+    return (
+        <div>
+            {
+                questions &&
+                questions.map((question, index) =>
+                (
+                    <Row style={{
+                        padding: 8, width: '100%', margin: index !== 0 && '8px 0px', minHeight: 200
+                        , boxShadow: 'rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px'
+                    }} gutter={[8, 8]}>
+                        <Col span={8} style={{
+                            flexDirection: 'column', height: 400, display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center'
+                        }}>
+                            <div
+                            // style={{ maxWidth: '100%' }}
+                            >
+
+                                <audio controls>
+                                    <source src={question.audio}></source>
+                                </audio>
+                            </div>
+                            {
+                                question.img &&
+                                <div style={{ maxWidth: '100%', maxHeight: '100%', overflow: 'auto' }}>
+                                    <img style={{
+                                        width: '100%', height: '100%',
+                                        objectFit: 'cover',
+                                        objectPosition: 'center'
+                                    }} src={question.img} alt="Question Image" />
+                                </div>
+                            }
+                        </Col>
+                        <Col span={16}>
+
+                            <p>
+                                {question.content}
+                            </p>
+                            {
+                                question.questionWithAnswerList.map((item, index) => (
+                                    <div>
+                                        <div style={{ display: 'flex', padding: 8, alignItems: 'center', }}>
+                                            <p
+                                            // style={{ height: 20, width: 20, fontWeight: 500, borderRadius: '50%', background: '#cfcfcf', padding: 12, margin: '0 8px' }}
+                                            >
+                                                {index + 1}
+
+                                            </p>
+                                            <p>{item.questionDTO.content}</p>
+                                        </div>
+
+                                        <Radio.Group
+                                        // value={selectedPart1.selectedPart1[question.questionDTO.id]}
+                                        // value={selected[question.questionDTO.id]}
+                                        // onChange={(e) => handleSelected(question.questionDTO.id, e.target.value)}
+                                        >
+                                            {
+                                                item.answerList.map((answer, index) => (
+                                                    <div style={{ width: '100%' }}>
+                                                        <Radio value={answer.id}>
+
+                                                            {/* <p>
+
+                                                                {answer.id}
+                                                            </p> */}
+                                                            <p>
+                                                                {/* {contentAnswer[index]} */}
+
+                                                                {answer.content}
+                                                            </p>
+                                                        </Radio>
+                                                    </div>
+                                                ))
+                                            }
+                                        </Radio.Group>
+                                    </div>
+                                ))
+                            }
+                        </Col>
+                    </Row>
+                )
+                )
+            }
+        </div >
+    )
+}
+
 
 export default Practice;
 
