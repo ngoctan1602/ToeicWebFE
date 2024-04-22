@@ -133,7 +133,7 @@ const AddNewTest = () => {
     const createTest = () => {
         if (listTrippleParaPart7.length === 3) {
             const listQuestion = listQuestionPart1.concat(listQuestionPart2, listQuestionPart3, listQuestionPart4, listQuestionPart5, listQuestionPart6, listQuestionSingle, listQuestionDouble, listQuestionTripple)
-            const listParagraph = listParaPart3.concat(listParaPart3, listParaPart4, listParaPart6, listSingleParaPart7, listDoubleParaPart7, listTrippleParaPart7)
+            const listParagraph = listParaPart3.concat(listParaPart4, listParaPart6, listSingleParaPart7, listDoubleParaPart7, listTrippleParaPart7)
             const test = {
                 idYear: yearSelected,
                 idTopic: topicSelected,
