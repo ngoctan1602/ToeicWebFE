@@ -13,6 +13,13 @@ $radius-min: 6px;
     /* Ensures the container fits the size of the image */
 }
 
+.pointer-p:hover {
+    transition-timing-function: cubic-bezier(0.075, 0.82, 0.165, 1);
+    transition-duration: 0.05s;
+    color: $background-color-blue-light;
+    text-decoration: underline;
+}
+
 .overlay {
     position: absolute;
     top: 0;

@@ -10,22 +10,24 @@ const UseMutationCustom = (fc, success, error, refetch, someTodo, pathNavigate) 
             queryClient.invalidateQueries(refetch)
             // someTodo()
             // someTodo(data)
-            console.log(data)
+            console.log(data.statusCode)
             if (data.statusCode === 404) {
                 setGlobalState({ message: error, success: false, handle: true });
             }
             else {
-                someTodo(data)
+                if (someTodo !== undefined && someTodo !== null)
+                    someTodo(data)
                 setGlobalState({ message: success, success: true, handle: true });
                 setTimeout(() => {
                     setGlobalState({ message: '', success: false, handle: false });
                     if (pathNavigate !== null) {
                         navigate(pathNavigate)
                     }
-                });
+                }, [2000]);
             }
         },
         onError: (data) => {
+            // console.log(data)
             setGlobalState({ message: error, success: false, handle: true });
             setTimeout(() => {
                 setGlobalState({ message: '', success: false, handle: false });

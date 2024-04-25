@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import * as QuestionSv from '../../../services/questionService'
 import * as TestSv from '../../../services/testServices'
+import * as HistorySV from '../../../services/historyServices'
 import UseMutationCustom from "../../common/useMutationCustom";
 import { useQuery } from "react-query";
-import { BackTop, Button, Col, Divider, Radio, Row } from "antd";
+import { BackTop, Button, Col, Divider, Modal, Radio, Row } from "antd";
 import { useNavigate } from "react-router";
 import CountdownTimer from "../common/countdown.";
 import clock from "../../../assets/clock.png"
@@ -128,6 +129,25 @@ const Practice = () => {
         }
     }, [isLoading, isError, questions, curentPart, selectedPart2])
 
+
+    useEffect(() => {
+        if (!isLoading && !isError) {
+            // setNameTest(getTest.data)
+            if (questions !== undefined) {
+                if (questions.data !== undefined) {
+                    if (parseInt(curentPart) === 5 && !selectedPart5) {
+                        // console.log(questions)
+                        const newObj = questions.data.reduce((acc, obj) => {
+                            acc[obj.questionDTO.id] = 0;
+                            return acc;
+                        }, {});
+                        setSelectedPart5(newObj)
+                    }
+                }
+            }
+        }
+    }, [isLoading, isError, questions, curentPart, selectedPart5])
+
     useEffect(() => {
         if (!isLoadingQuestionPara && !isErrorQuestionPara) {
             if (questionPara !== undefined) {
@@ -171,11 +191,64 @@ const Practice = () => {
         setCurrentPart(idPart)
     };
 
+    const createNewHistory =
+        UseMutationCustom(HistorySV.createNewTest, "Hoàn thành bài thi", "Lỗi lưu bài thi", "getHistory", null, '/test')
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const handleOk = () => {
+        const request = {
+            idTest: pathVariable,
+            listIdPart: parts,
+            totalTime: convertMinutesToHHMMSS(queryParameters.time_limit),
+            dateCompleted: new Date().toISOString().slice(0, 10),
+            listChoose: convertKeyValueInselected(selectedPart1).concat(
+                convertKeyValueInselected(selectedPart2),
+                convertKeyValueInselected(selectedPart3),
+                convertKeyValueInselected(selectedPart4),
+                convertKeyValueInselected(selectedPart5),
+                convertKeyValueInselected(selectedPart6),
+                convertKeyValueInselected(selectedPart7),
+            )
+        }
+        createNewHistory.mutate(request)
 
+        setIsModalOpen(false);
+    };
+    const handleCancel = () => {
+
+        setIsModalOpen(false);
+    };
+    const submit = () => {
+        setIsModalOpen(true)
+    }
+    function convertMinutesToHHMMSS(totalMinutes) {
+        var hours = Math.floor(totalMinutes / 60);
+        var minutes = totalMinutes % 60;
+        var seconds = Math.floor((totalMinutes * 60) % 60);
+
+        // Formatting to ensure leading zeros if needed
+        hours = String(hours).padStart(2, '0');
+        minutes = String(minutes).padStart(2, '0');
+        seconds = String(seconds).padStart(2, '0');
+
+        return hours + ':' + minutes + ':' + seconds;
+    }
+    function convertKeyValueInselected(selectedPart) {
+        const selected = []
+        for (const key in selectedPart) {
+            selected.push(
+                {
+                    questionId: parseInt(key),
+                    answerId: selectedPart[key]
+                }
+            )
+        }
+        return selected
+    }
 
     return (
         <div style={{ width: '100%', minHeight: 500 }}>
-
+            <Modal cancelText="Hủy" title="Bạn chắc chắc nộp bài" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+            </Modal>
             {
                 (!isLoadingTest && !isErrorTest) &&
                 <div style={{ display: 'flex', width: '100%', justifyContent: 'center' }}>
@@ -188,7 +261,7 @@ const Practice = () => {
                     <Button onClick={() => navigate(-1)}>
                         Thoát
                     </Button>
-                    <Button onClick={() => console.log(selectedPart1)}>Nộp bài</Button>
+                    <Button onClick={() => submit()}>Nộp bài</Button>
                 </div>
             }
             <div style={{ display: 'flex' }}>
@@ -216,6 +289,7 @@ const Practice = () => {
                         (!isLoading && !isError && questions) &&
                         parseInt(curentPart) === 2 &&
                         <Part2 questions={questions.data}
+                            divRefs={divRefs}
                             selectedPart2={{ selectedPart2: selectedPart2, setSelectedPart2: setSelectedPart2 }}
                         />
                     }
@@ -224,6 +298,7 @@ const Practice = () => {
                         (!isLoadingQuestionPara && !isErrorQuestionPara && questionPara) &&
                         parseInt(curentPart) === 3 &&
                         <Part3 questions={questionPara.data}
+                            divRefs={divRefs}
                             selectedPart3={{ selectedPart3: selectedPart3, setSelectedPart3: setSelectedPart3 }}
                         />
                     }
@@ -232,9 +307,28 @@ const Practice = () => {
                         (!isLoadingQuestionPara && !isErrorQuestionPara && questionPara) &&
                         parseInt(curentPart) === 4 &&
                         <Part3 questions={questionPara.data}
+                            divRefs={divRefs}
                             selectedPart3={{ selectedPart3: selectedPart4, setSelectedPart3: setSelectedPart4 }}
                         />
                     }
+                    {
+                        (!isLoading && !isError && questions) &&
+                        parseInt(curentPart) === 5 &&
+                        <Part5 questions={questions.data}
+                            divRefs={divRefs}
+                            selectedPart5={{ selectedPart5: selectedPart5, setSelectedPart5: setSelectedPart5 }}
+                        />
+                    }
+
+                    {
+                        (!isLoadingQuestionPara && !isErrorQuestionPara && questionPara) &&
+                        parseInt(curentPart) === 6 &&
+                        <Part6 questions={questionPara.data}
+                            divRefs={divRefs}
+                            selectedPart6={{ selectedPart6: selectedPart6, setSelectedPart6: setSelectedPart6 }}
+                        />
+                    }
+
                 </Col>
                 <Col span={4} style={{
                     maxHeight: 1000, padding: 8,
@@ -256,7 +350,7 @@ const Practice = () => {
                             selected={parseInt(curentPart) === 3 ? selectedPart3 : parseInt(curentPart) === 4 ? selectedPart4 :
                                 parseInt(curentPart) === 6 ?
                                     selectedPart6 : selectedPart7}
-
+                            part={parseInt(curentPart)}
                             questions={questionPara.data} paragraph={true}>
 
                         </GetButtonQuestion>
@@ -269,9 +363,7 @@ const Practice = () => {
     );
 }
 
-const GetButtonQuestion = ({ questions, selected, paragraph, scrollIntoView }) => {
-    // console.log(questions)
-    console.log(selected)
+const GetButtonQuestion = ({ questions, selected, paragraph, scrollIntoView, part }) => {
     return (
         <Row style={{ display: 'flex', flexWrap: 'wrap', padding: 8 }} gutter={[4, 4]}>
             {
@@ -286,8 +378,12 @@ const GetButtonQuestion = ({ questions, selected, paragraph, scrollIntoView }) =
                                 }}
                                 >
                                     {
-                                        3 * index + i + 1
+                                        part === 6 ?
+                                            4 * index + i + 1
+                                            :
+                                            3 * index + i + 1
                                     }
+
                                 </Button>
                             </Col>
                         ))
@@ -391,7 +487,7 @@ const Part1 = ({ questions, selectedPart1, divRefs }) => {
         </div >
     )
 }
-const Part2 = ({ questions, selectedPart2 }) => {
+const Part2 = ({ questions, selectedPart2, divRefs }) => {
 
     const contentAnswer = [
         "A", "B", "C"
@@ -410,13 +506,16 @@ const Part2 = ({ questions, selectedPart2 }) => {
                     <Row style={{
                         padding: 8, width: '100%', margin: index !== 0 && '8px 0px', minHeight: 200
                         , boxShadow: 'rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px'
-                    }} gutter={[8, 8]}>
+
+                    }}
+                        ref={(ref) => (divRefs.current[question.questionDTO.id] = ref)}
+                        gutter={[8, 8]}>
                         <Col offset={1} span={20}>
                             <div style={{ width: '100%', display: 'flex', alignItems: 'center' }}>
 
                                 <p style={{ fontWeight: 500, borderRadius: '50%', background: '#cfcfcf', padding: 12, margin: '0 8px' }}>
-                                    {/* {index + 1} */}
-                                    {question.questionDTO.id}
+                                    {index + 1}
+                                    {/* {question.questionDTO.id} */}
                                 </p>
                                 <audio controls>
                                     <source src={question.questionDTO.audio}></source>
@@ -457,7 +556,7 @@ const Part2 = ({ questions, selectedPart2 }) => {
     )
 }
 
-const Part3 = ({ questions, selectedPart3 }) => {
+const Part3 = ({ questions, selectedPart3, divRefs }) => {
     console.log(selectedPart3)
 
 
@@ -470,10 +569,11 @@ const Part3 = ({ questions, selectedPart3 }) => {
                 questions &&
                 questions.map((question, index) =>
                 (
-                    <Row style={{
-                        padding: 8, width: '100%', margin: index !== 0 && '8px 0px', minHeight: 200
-                        , boxShadow: 'rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px'
-                    }} gutter={[8, 8]}>
+                    <Row
+                        style={{
+                            padding: 8, width: '100%', margin: index !== 0 && '8px 0px', minHeight: 200
+                            , boxShadow: 'rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px'
+                        }} gutter={[8, 8]}>
                         <Col span={8} style={{
                             flexDirection: 'column', height: 400, display: 'flex',
                             alignItems: 'center',
@@ -505,7 +605,9 @@ const Part3 = ({ questions, selectedPart3 }) => {
                             </p> */}
                             {
                                 question.questionWithAnswerList.map((item, i) => (
-                                    <div>
+                                    <div
+                                    // ref={(ref) => (divRefs.current[item.questionDTO.id] = ref)}
+                                    >
                                         <div style={{ display: 'flex', padding: 8, alignItems: 'center', }}>
                                             <p style={{ fontWeight: 500, borderRadius: '50%', background: '#cfcfcf', padding: 12, margin: '0 8px' }}>
                                                 <p>{index * 3 + i + 1}</p>
@@ -549,6 +651,165 @@ const Part3 = ({ questions, selectedPart3 }) => {
     )
 }
 
+const Part5 = ({ questions, selectedPart5, divRefs }) => {
+
+
+    const handleSelected = (questionId, answerId) => {
+        selectedPart5.setSelectedPart5({ ...selectedPart5.selectedPart5, [questionId]: answerId })
+    }
+    return (
+        <div>
+            {
+                questions &&
+                questions.map((question, index) =>
+                (
+                    <Row
+                        ref={(ref) => (divRefs.current[question.questionDTO.id] = ref)}
+
+                        style={{
+                            padding: 8, width: '100%', margin: index !== 0 && '8px 0px', minHeight: 200
+                            , boxShadow: 'rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px'
+                        }} gutter={[8, 8]}>
+
+                        <Col span={24}
+                            style={{ display: 'flex', flexDirection: 'column' }}
+                        >
+                            <div
+                                style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}
+                            >
+                                {
+                                    <p style={{ marginRight: '4px', alignContent: 'center', padding: 12, fontWeight: 500, fontSize: 16, background: '#cfcfcf', borderRadius: '50%' }}>{index + 1}</p>
+                                }
+                                <p>
+                                    {question.questionDTO.content}
+                                </p>
+
+                            </div>
+                            <Radio.Group
+                                value={selectedPart5.selectedPart5[question.questionDTO.id]}
+                                onChange={(e) => handleSelected(question.questionDTO.id, e.target.value)}
+                            >
+                                {
+                                    question.answerList.map((answer, index) => (
+                                        <div style={{ width: '100%' }}>
+                                            <Radio value={answer.id}>
+
+                                                {/* <p>
+
+                                                                {answer.id}
+                                                            </p> */}
+                                                <p>
+                                                    {/* {contentAnswer[index]} */}
+
+                                                    {answer.content}
+                                                </p>
+                                            </Radio>
+                                        </div>
+                                    ))
+                                }
+                            </Radio.Group>
+                        </Col>
+                    </Row>
+                )
+                )
+            }
+        </div >
+    )
+}
+
+
+const Part6 = ({ questions, selectedPart6, divRefs }) => {
+
+    const handleSelected = (questionId, answerId) => {
+        selectedPart6.setSelectedPart3({ ...selectedPart6.selectedPart6, [questionId]: answerId })
+    }
+    return (
+        <div>
+            {
+                questions &&
+                questions.map((question, index) =>
+                (
+                    <Row
+                        style={{
+                            padding: 8, width: '100%', margin: index !== 0 && '8px 0px', minHeight: 200
+                            , boxShadow: 'rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px'
+                        }} gutter={[8, 8]}>
+                        <Col offset={8} span={16} >
+                            <p style={{ textAlign: 'center' }}>
+
+                                {
+                                    question.content
+                                }
+                            </p>
+                        </Col>
+                        <Col span={8} style={{
+                            flexDirection: 'column', height: 400, display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center'
+                        }}>
+                            {
+                                question.img &&
+                                <div style={{ maxWidth: '100%', maxHeight: '100%', overflow: 'auto' }}>
+                                    <img style={{
+                                        width: '100%', height: '100%',
+                                        objectFit: 'cover',
+                                        objectPosition: 'center'
+                                    }} src={question.img} alt="Question Image" />
+                                </div>
+                            }
+                        </Col>
+                        <Col span={16}>
+
+                            {/* <p>
+                                {question.content}
+                            </p> */}
+                            {
+                                question.questionWithAnswerList.map((item, i) => (
+                                    <div
+                                    // ref={(ref) => (divRefs.current[item.questionDTO.id] = ref)}
+                                    >
+                                        <div style={{ display: 'flex', padding: 8, alignItems: 'center', }}>
+                                            <p style={{ fontWeight: 500, borderRadius: '50%', background: '#cfcfcf', padding: 12, margin: '0 8px' }}>
+                                                <p>{index * 4 + i + 1}</p>
+                                            </p>
+                                            <p>{item.questionDTO.content}</p>
+                                        </div>
+
+                                        <Radio.Group
+                                            value={selectedPart6.selectedPart6[item.questionDTO.id]}
+                                            // value={selected[question.questionDTO.id]}
+                                            onChange={(e) => handleSelected(item.questionDTO.id, e.target.value)}
+                                        >
+                                            {
+                                                item.answerList.map((answer, index) => (
+                                                    <div style={{ width: '100%' }}>
+                                                        <Radio value={answer.id}>
+
+                                                            {/* <p>
+
+                                                                {answer.id}
+                                                            </p> */}
+                                                            <p>
+                                                                {/* {contentAnswer[index]} */}
+
+                                                                {answer.content}
+                                                            </p>
+                                                        </Radio>
+                                                    </div>
+                                                ))
+                                            }
+                                        </Radio.Group>
+                                    </div>
+                                ))
+                            }
+                        </Col>
+                    </Row>
+                )
+                )
+            }
+        </div >
+    )
+}
 
 export default Practice;
 
