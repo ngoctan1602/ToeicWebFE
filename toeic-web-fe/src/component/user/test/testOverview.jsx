@@ -20,6 +20,7 @@ import { useQuery } from 'react-query';
 import { getValueCheck, updateSelectedList } from '../../common/selectedList';
 import { useGlobalState } from '../../common/globaleState';
 import { useNavigate } from 'react-router-dom';
+import HistoryOverView from '../history/historyOverview';
 const TestOverView = () => {
     const location = useLocation();
     const pathParts = location.pathname.split("/");
@@ -92,6 +93,7 @@ const GetOverViewTest = ({ id }) => {
                                 Đáp án/ transcript
                             </p>
                         </Col>
+
                         {
                             checked &&
                             <Col span={20}>
@@ -102,6 +104,9 @@ const GetOverViewTest = ({ id }) => {
                                 </p>
                             </Col>
                         }
+                        <Col span={24}>
+                            <HistoryOverView idTest={id}></HistoryOverView>
+                        </Col>
                     </Row>
                     : <p>Không có dữ liệu bài thi</p>
             }
