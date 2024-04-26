@@ -15,7 +15,7 @@ const HistoryOverView = ({ idTest }) => {
             {/* Day la trang lich su + {idTest} */}
             {
                 getHistory && !isLoading && !isError
-                &&
+                && getHistory.data &&
                 <GetHistory history={getHistory.data} idTest={idTest}></GetHistory>
             }
         </div>

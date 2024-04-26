@@ -7,3 +7,11 @@ export const createNewTest = async (history) => {
 export const getHistoryByTestAndUser = async (param) => {
     return await BaseApi.getItems("history/test", param)
 }
+
+export const getHistoryOverView = async (param) => {
+    return await BaseApi.getItems("history/overview", param)
+}
+
+export const getSelected = async (param) => {
+    return await BaseApi.getItems("history/part", param)
+}
