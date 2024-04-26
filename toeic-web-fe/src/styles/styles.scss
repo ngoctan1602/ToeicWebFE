@@ -7,6 +7,20 @@ $background-color-blue-light: #67C6E3;
 // $text-color-blue-light: #E0F4FF;
 $radius-min: 6px;
 
+.block-div {
+    font-size: 16;
+    font-weight: 400;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin: 4px;
+    width: 150px;
+    padding: 8;
+    height: 150px;
+    box-shadow: rgba(17, 17, 26, 0.05) 0px 1px 0px, rgba(17, 17, 26, 0.1) 0px 0px 8px; // margin: 0px 8px;
+}
+
 .cover-container {
     position: relative;
     display: inline-block;
